@@ -50,7 +50,9 @@ func main() {
 	reShow := regexp.MustCompile(`(.*)(S[0-9]+)E[0-9]+`)
 	reMovie := regexp.MustCompile(`^([^()\n]*)\(?([1-2][0-9][0-9][0-9])\)?.*(1080p|2160p|720p).*$`)
 
-	if err := notify.Watch("./test/...", c, notify.InCloseWrite, notify.InMovedTo); err != nil {
+	watchFolder := fmt.Sprintf("%s/...", downloadsFolder)
+	log.Printf("Watching `%s`", watchFolder)
+	if err := notify.Watch(watchFolder, c, notify.InCloseWrite, notify.InMovedTo); err != nil {
 		log.Fatal(err)
 	}
 	defer notify.Stop(c)
