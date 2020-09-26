@@ -1,7 +1,7 @@
 FROM golang:1.15.2-alpine3.12
 
 # Set the Current Working Directory inside the container
-#WORKDIR $GOPATH/src/github.com/codefresh-contrib/go-sample-app
+#WORKDIR $GOPATH/src/downloadsOrganiser
 WORKDIR $GOPATH/src/downloadsOrganiser
 
 # Copy everything from the current directory to the PWD (Present Working Directory) inside the container
