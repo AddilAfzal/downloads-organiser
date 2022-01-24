@@ -1,4 +1,4 @@
-FROM golang:1.15.2-alpine3.12
+FROM golang:1.15.2-alpine3.12 as build
 
 # Set the Current Working Directory inside the container
 #WORKDIR $GOPATH/src/downloadsOrganiser
@@ -13,10 +13,12 @@ RUN go get -d -v ./...
 # Install the package
 RUN go install -v ./...
 
-RUN go build -o downloadsOrganiser ./cmd/downloads_organiser/main.go 
+RUN go build -o /downloadsOrganiser ./cmd/downloads_organiser/main.go 
 
-## This container exposes port 8080 to the outside world
-#EXPOSE 8080
+
+FROM alpine:3.14
+
+COPY --from=build /downloadsOrganiser /downloadsOrganiser
 
 # Run the executable
-CMD ["downloadsOrganiser"]
+ENTRYPOINT ["/downloadsOrganiser"]
