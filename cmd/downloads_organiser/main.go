@@ -1,13 +1,14 @@
 package main
 
 import (
-	"downloadsOrganiser/config"
-	. "downloadsOrganiser/internal/downloads_organiser"
 	"fmt"
-	"github.com/rjeczalik/notify"
 	"log"
 	"path"
 	"strings"
+
+	"github.com/addilafzal/downloads-organiser/config"
+	. "github.com/addilafzal/downloads-organiser/internal/downloads_organiser"
+	"github.com/rjeczalik/notify"
 )
 
 func main() {
