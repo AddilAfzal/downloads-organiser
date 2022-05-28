@@ -1,11 +1,12 @@
 package downloads_organiser
 
 import (
-	"downloadsOrganiser/config"
 	"fmt"
 	"log"
 	"os"
 	"path"
+
+	"github.com/addilafzal/downloads-organiser/config"
 )
 
 func HandleShow(show *TVShow) {
@@ -29,7 +30,7 @@ func HandleShow(show *TVShow) {
 
 	newPath := fmt.Sprintf("%s/%s", showSeasonFolder, show.FileName)
 	log.Printf("Moving file to %s", newPath)
-	err := os.Rename(show.FilePath, newPath)
+	err := MoveFile(show.FilePath, newPath)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -38,7 +39,7 @@ func HandleShow(show *TVShow) {
 func HandleMovie(movie *Movie) {
 	newPath := fmt.Sprintf("%s/%s", config.MoviesFolder, movie.FileName)
 	log.Printf("Moving file to %s", newPath)
-	err := os.Rename(movie.FilePath, newPath)
+	err := MoveFile(movie.FilePath, newPath)
 	if err != nil {
 		fmt.Println(err)
 		return
