@@ -54,8 +54,8 @@ func handleFile(ei notify.EventInfo) {
 			s := &TVShow{
 				FileName: fileName,
 				FilePath: ei.Path(),
-				Name:     strings.ToTitle(show),
-				Season:   strings.ToTitle(season),
+				Name:     strings.Title(show),
+				Season:   strings.Title(season),
 			}
 			HandleShow(s)
 		} else if movieYearQuality := ReMovie.FindAllStringSubmatch(fileName, 3); movieYearQuality != nil {
