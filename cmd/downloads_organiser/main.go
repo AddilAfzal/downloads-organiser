@@ -20,7 +20,7 @@ func main() {
 
 	watchFolder := fmt.Sprintf("%s/...", config.DownloadsFolder)
 	log.Printf("Watching `%s`", watchFolder)
-	if err := notify.Watch(watchFolder, c, notify.InCloseWrite, notify.InMovedTo); err != nil {
+	if err := notify.Watch(watchFolder, c, notify.InCloseWrite, notify.InMovedTo, notify.InMoveSelf, notify.InCloseNowrite); err != nil {
 		log.Fatal(err)
 	}
 	defer notify.Stop(c)
@@ -36,6 +36,13 @@ func main() {
 			log.Println("File", ei.Path(), "was swapped/moved into the watched directory.")
 			handleFile(ei)
 			continue
+		default:
+			if config.Debug == "true" {
+				log.Println(ei)
+				log.Println(ei.Event().String())
+				log.Println(ei.Path())
+				continue
+			}
 		}
 	}
 }

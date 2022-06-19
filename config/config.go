@@ -9,6 +9,7 @@ var (
 	ShowsFolder     = getEnv("SHOWS_PATH", "./tv show")
 	MoviesFolder    = getEnv("MOVIES_PATH", "./movies")
 	DownloadsFolder = getEnv("DOWNLOADS_PATH", "./downloads")
+	Debug           = getEnv("DEBUG", "false")
 )
 
 func Init() {
