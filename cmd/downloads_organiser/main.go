@@ -16,7 +16,7 @@ func main() {
 
 	// Make the channel buffered to ensure no event is dropped. Notify will drop
 	// an event if the receiver is not able to keep up the sending pace.
-	c := make(chan notify.EventInfo, 1)
+	c := make(chan notify.EventInfo, 1000)
 
 	watchFolder := fmt.Sprintf("%s/...", config.DownloadsFolder)
 	log.Printf("Watching `%s`", watchFolder)
