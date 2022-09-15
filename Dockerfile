@@ -1,4 +1,4 @@
-FROM golang:1.15.2-alpine3.12 as build
+FROM golang:1.18-alpine3.16 as build
 
 # Set the Current Working Directory inside the container
 #WORKDIR $GOPATH/src/downloadsOrganiser

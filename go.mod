@@ -1,6 +1,6 @@
 module github.com/addilafzal/downloads-organiser
 
-go 1.15
+go 1.18
 
 require (
 	github.com/onsi/ginkgo/v2 v2.1.4 // indirect
