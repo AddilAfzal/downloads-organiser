@@ -56,20 +56,19 @@ func handleFile(ei notify.EventInfo) {
 	// We only care about MKV files for now
 	if strings.HasSuffix(ei.Path(), ".mkv") {
 		fileName := path.Base(ei.Path())
-
+		var asset Asset
 		if showSeason := ReShow.FindAllStringSubmatch(fileName, 3); showSeason != nil {
 			// It's a TV show
 			show := strings.Replace(showSeason[0][1], ".", " ", -1) // Remove dots "."
 			show = strings.Trim(show, " ")                          // Remove spaces
 			season := showSeason[0][2]                              // with S (S07)
 
-			s := &TVShow{
+			asset = &TVShow{
 				FileName: fileName,
 				FilePath: ei.Path(),
 				Name:     strings.Title(show),
 				Season:   strings.Title(season),
 			}
-			HandleShow(s)
 		} else if movieYearQuality := ReMovie.FindAllStringSubmatch(fileName, 3); movieYearQuality != nil {
 			// It's a Movie
 			movie := strings.Replace(movieYearQuality[0][1], ".", " ", -1) // Remove dots "."
@@ -77,18 +76,19 @@ func handleFile(ei notify.EventInfo) {
 			year := movieYearQuality[0][2]
 			quality := movieYearQuality[0][3]
 
-			m := &Movie{
+			asset = &Movie{
 				FileName: fileName,
 				FilePath: ei.Path(),
 				Name:     movie,
 				Year:     year,
 				Quality:  quality,
 			}
-			HandleMovie(m)
 		} else {
 			logrus.Warnf("What is this file? %s \n", fileName)
+			return
 		}
-	} else {
-		logrus.Info("Not .mkv file, skipping")
+		asset.Handle()
+		return
 	}
+	logrus.Info("Not .mkv file, skipping")
 }
