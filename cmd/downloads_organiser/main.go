@@ -82,7 +82,7 @@ func handle(ei notify.EventInfo) {
 
 func handleFile(path string, info fs.FileInfo, err error) error {
 	// We only care about MKV files for now
-	if strings.HasSuffix(info.Name(), ".mkv") {
+	if strings.HasSuffix(info.Name(), ".mkv") || strings.HasSuffix(info.Name(), ".mp4") {
 		fileName := info.Name()
 		var asset Asset
 		if showSeason := ReShow.FindAllStringSubmatch(fileName, 3); showSeason != nil {
