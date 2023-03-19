@@ -2,11 +2,12 @@ package downloads_organiser
 
 import (
 	"fmt"
-	"github.com/addilafzal/downloads-organiser/config"
-	"github.com/sirupsen/logrus"
 	"log"
 	"os"
 	"path"
+
+	"github.com/addilafzal/downloads-organiser/config"
+	"github.com/sirupsen/logrus"
 )
 
 type Asset interface {
@@ -60,7 +61,8 @@ func (m Movie) Handle() {
 	logrus.Infof("Moving file to %s", newPath)
 	err := MoveFile(m.FilePath, newPath)
 	if err != nil {
-		fmt.Println(err)
+		logrus.Warningf("Failed to move file: %s", err)
+		fmt.Printf("%+v", m)
 		return
 	}
 

@@ -2,10 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
+	"io/fs"
 	"log"
-	"path"
+	"os"
+	"path/filepath"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/addilafzal/downloads-organiser/config"
 	. "github.com/addilafzal/downloads-organiser/internal/downloads_organiser"
@@ -35,11 +38,11 @@ func main() {
 		switch ei := <-c; ei.Event() {
 		case notify.InCloseWrite:
 			logrus.Info("File", ei.Path(), "was written to in the watched directory.")
-			handleFile(ei)
+			handle(ei)
 			continue
 		case notify.InMovedTo:
 			logrus.Info("File", ei.Path(), "was swapped/moved into the watched directory.")
-			handleFile(ei)
+			handle(ei)
 			continue
 		default:
 			if config.Debug == "true" {
@@ -52,10 +55,35 @@ func main() {
 	}
 }
 
-func handleFile(ei notify.EventInfo) {
+func handle(ei notify.EventInfo) {
+	file, err := os.Open(ei.Path())
+	if err != nil {
+		logrus.Warn("Failed to open file", err)
+		return
+	}
+	defer file.Close()
+
+	fileInfo, err := file.Stat()
+	if err != nil {
+		// error handling
+	}
+
+	if fileInfo.IsDir() {
+		err = filepath.Walk(ei.Path(), handleFile)
+		if err != nil {
+			logrus.Warnf("Couldn't walk directory: %s", err)
+		}
+		return
+	}
+
+	strings.Split(ei.Path(), "/")
+	handleFile(ei.Path(), fileInfo, nil)
+}
+
+func handleFile(path string, info fs.FileInfo, err error) error {
 	// We only care about MKV files for now
-	if strings.HasSuffix(ei.Path(), ".mkv") {
-		fileName := path.Base(ei.Path())
+	if strings.HasSuffix(info.Name(), ".mkv") {
+		fileName := info.Name()
 		var asset Asset
 		if showSeason := ReShow.FindAllStringSubmatch(fileName, 3); showSeason != nil {
 			// It's a TV show
@@ -65,7 +93,7 @@ func handleFile(ei notify.EventInfo) {
 
 			asset = &TVShow{
 				FileName: fileName,
-				FilePath: ei.Path(),
+				FilePath: path,
 				Name:     strings.Title(show),
 				Season:   strings.Title(season),
 			}
@@ -78,17 +106,18 @@ func handleFile(ei notify.EventInfo) {
 
 			asset = &Movie{
 				FileName: fileName,
-				FilePath: ei.Path(),
+				FilePath: path,
 				Name:     movie,
 				Year:     year,
 				Quality:  quality,
 			}
 		} else {
 			logrus.Warnf("What is this file? %s \n", fileName)
-			return
+			return nil
 		}
 		asset.Handle()
-		return
+		return nil
 	}
 	logrus.Info("Not .mkv file, skipping")
+	return nil
 }
